@@ -17,14 +17,16 @@ cat "/etc/passwd"
 echo "End."
 echo " " 
 
-sleep 5
-
 
 ## 2
 # Регистрация пользователя test1, имеющего домашний каталог
 # /home/nouser и являющегося членом групп mail и users.
 # Пользователь должен иметь UID = 1777.
-adduser -d /home/nouser -G mail,users -u 1777 test1
+useradd -G mail,users -d /home/nouser -u 1777 -m test1
+
+# ... Проверка UID, GID, а также списка групп.
+id test1
+echo " " 
 
 # Ознакомление с соответствующей записью в /ect/passwd.
 echo "File \"/etc/passwd\". Begin:"
@@ -32,9 +34,12 @@ cat "/etc/passwd"
 echo "End."
 echo " " 
 
-sleep 100
-
 # Изменение UID пользователя test1 на 1001.
+usermod -u 1001 test1
+
+# ... Проверка UID, GID, а также списка групп.
+id test1
+echo " " 
 
 # Проверка изменений соответствующей записи в /ect/passwd.
 echo "File \"/etc/passwd\". Begin:"
@@ -49,6 +54,7 @@ echo "End."
 echo " "
 
 # Установка для данного пользователя пароля.
+passwd test1
 
 # Изучение изменений в /ect/shadow.
 echo "File \"/etc/shadow\". Begin:"
@@ -60,16 +66,35 @@ echo " "
 ## 3
 # Создание учетной записи для пользователя test2 с настройками
 # по умолчанию.
+useradd test2
+
+# ... Проверка UID, GID, а также списка групп.
+id test2
+echo " " 
 
 # Проверка, создан ли домашний каталог пользователя.
+ls /home/
+echo " " 
 
 # Изменение имени созданного пользователя с test2 на test3.
+usermod --login test3 test2
 
 # Изучение /etc/group.
+
+echo "File \"/etc/group\". Begin:"
+cat "/etc/group"
+echo "End."
+echo " " 
 
 # Удаление пользователя test3.
+userdel -r test3
 
 # Изучение /etc/group.
+
+echo "File \"/etc/group\". Begin:"
+cat "/etc/group"
+echo "End."
+echo " " 
 
 
 ## 4
@@ -102,3 +127,4 @@ echo " "
 
 ## 8
 # Удаление всех созданных учетных записей и групп пользователей
+# userdel -r test1
