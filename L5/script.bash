@@ -22,6 +22,7 @@ echo " "
 # Регистрация пользователя test1, имеющего домашний каталог
 # /home/nouser и являющегося членом групп mail и users.
 # Пользователь должен иметь UID = 1777.
+groupadd users
 useradd -G mail,users -d /home/nouser -u 1777 -m test1
 
 # ... Проверка UID, GID, а также списка групп.
@@ -94,37 +95,59 @@ userdel -r test3
 echo "File \"/etc/group\". Begin:"
 cat "/etc/group"
 echo "End."
-echo " " 
+echo " "
 
 
 ## 4
 # Установка даты устаревания пароля для пользователя test1 на 
-# 31 декабря 2017 года.
+# 31 декабря 2017(20) года.
+chage -d "2019-12-31" test1
+chage -M 366 test1
 
 # Проверка изменений с помощью команды chage.
+chage --list test1
 
 # Блокировка учетной записи пользователя test1.
+usermod -L test1
 
 # Проверка изменений в /etc/shadow.
+echo "File \"/etc/shadow\". Begin:"
+cat "/etc/shadow"
+echo "End."
+echo " "
 
 
 ## 5
 # Создание группы пользователей xusers с GUI = 1010.
+groupadd -g 1010 xusers
 
 
 ## 6
 # Регистрация своей учетной записи в качестве участника
 # группы xusers.
+usermod -a -G xusers $USER
 
 # Ознакомление с соответствующей записью в /ect/group.
+echo "File \"/etc/group\". Begin:"
+cat "/etc/group"
+echo "End."
+echo " "
 
 
 ## 7
 # Изменение имени группы xusers на yusers.
+groupmod -n yusers xusers
 
 # Проверка изменений в /etc/group.
+echo "File \"/etc/group\". Begin:"
+cat "/etc/group"
+echo "End."
+echo " "
 
 
 ## 8
 # Удаление всех созданных учетных записей и групп пользователей
-# userdel -r test1
+gpasswd -d $USER yusers
+userdel -r test1
+groupdel test2
+groupdel yusers
