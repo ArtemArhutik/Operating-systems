@@ -40,8 +40,6 @@ if [[ $parameter_count = 3 ]]; then
 
   files=$(find -type f -perm $find_permissions)
   chmod $target_permissions $files
-  
-  fi
 else
   echo "Ошибка: Неверное число параметров." >&2
   exit
