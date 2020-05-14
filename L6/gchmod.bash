@@ -12,10 +12,12 @@
 # -- целевые права.
 
 parameter_count=$#
-if [[ $parameter_count = 3 ]]; then
+if [[ $parameter_count = 3 ]]
+then
   directory=$1
-  if [[ -e $directory ]]; then
-    echo "OK"
+  if [[ -e $directory ]]
+  then
+    echo "Указанная директория найдена."
   else 
     echo "Ошибка: Указанная директория не существует.">&2
     exit
@@ -23,23 +25,37 @@ if [[ $parameter_count = 3 ]]; then
 
   permissions='^[0-7]+$'
   find_permissions=$2
-  if [[ $find_permissions =~ $permissions ]]; then
-  echo "OK"
+  if [[ $find_permissions =~ $permissions ]]
+  then
+    echo "Искомые права доступа указаны корректно."
   else 
-    echo "Ошибка: Неверно указаны права для поиска.">&2
+    echo "Ошибка: Искомые права доступа указаны неверно.">&2
     exit
   fi
   
   target_permissions=$3
-  if [[ $target_permissions =~ $permissions ]]; then
-  echo "OK"
+  if [[ $target_permissions =~ $permissions ]]
+  then
+    echo "Целевые права доступа указаны корректно."
   else
-    echo "Ошибка: Неверно указаны целевые права.">&2
+    echo "Ошибка: Целевые права доступа указаны неверно.">&2
     exit
   fi
+  
+  echo ""
+  files=$(find ./$directory -type f -perm $find_permissions)
+  if [[ $files != "" ]]
+  then 
+    echo "Найденные файлы:"
+    echo "$files"
+    chmod $target_permissions $files
 
-  files=$(find -type f -perm $find_permissions)
-  chmod $target_permissions $files
+    echo ""
+    echo "Исходные права доступа: $find_permissions"
+    echo "Текущие права доступа: $target_permissions" 
+  else
+    echo "Файлы с указанными правами доступа не найдены"
+  fi
 else
   echo "Ошибка: Неверное число параметров." >&2
   exit
